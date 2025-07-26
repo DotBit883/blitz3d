@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 4.0)
 project(Blitz3D CXX)
 
 add_subdirectory(asm_makeinsts)
-# add_subdirectory(bblaunch)
+add_subdirectory(bblaunch)
 # add_subdirectory(bbruntime)
 # add_subdirectory(bbruntime_dll)
 # add_subdirectory(blitz)
