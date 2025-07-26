@@ -8,3 +8,28 @@ Release
 _release
 *__Win32_*
 /innosetup/installs
+
+# CMake generated files
+build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+_CPack_Packages/
+
+# Executables and Libraries (platform-specific suffixes might be needed)
+*.exe
+*.dll
+*.so
+*.dylib
+*.lib
+*.a
+
+# Object files
+*.o
+*.obj
+
+# IDE-specific files (if applicable, e.g., for CLion)
+.idea/
+cmake-build-*/
