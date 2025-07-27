@@ -1,32 +1,30 @@
-
 #ifndef OPERAND_H
 #define OPERAND_H
+#pragma once
 
-#include <string>
 #include <iostream>
+#include <string>
 
-using namespace std;
+struct Operand {
 
-struct Operand{
+  int mode;
+  int reg, imm, offset;
+  std::string immLabel, baseLabel;
+  int baseReg, indexReg, shift;
 
-	int mode;
-	int reg,imm,offset;
-	string immLabel,baseLabel;
-	int baseReg,indexReg,shift;
+  Operand();
+  Operand(const std::string &s);
 
-	Operand();
-	Operand( const string &s );
-
-	void parse();
+  void parse();
 
 private:
-	string s;
-	bool parseSize( int *sz );
-	bool parseChar( char c );
-	bool parseReg( int *reg );
-	bool parseFPReg( int *reg );
-	bool parseLabel( string *t );
-	bool parseConst( int *iconst );
+  std::string s;
+  bool parseSize(int *sz);
+  bool parseChar(char c);
+  bool parseReg(int *reg);
+  bool parseFPReg(int *reg);
+  bool parseLabel(std::string *t);
+  bool parseConst(int *iconst);
 };
 
 #endif

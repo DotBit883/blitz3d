@@ -1,7 +1,7 @@
-#include <unistd.h>
-#include <sys/wait.h>
 #include <filesystem>
 #include <iostream>
+#include <sys/wait.h>
+#include <unistd.h>
 
 int main(int argc, char *argv[]) {
   std::filesystem::path current_path = std::filesystem::current_path();
@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
   pid_t pid = fork();
 
   if (pid == 0) {
-	std::filesystem::path ide_path = current_path / "bin/ide.exe";
+    std::filesystem::path ide_path = current_path / "bin/ide.exe";
     execvp(ide_path.c_str(), argv);
 
     std::cerr << "Failed to execute program." << std::endl;

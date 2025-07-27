@@ -1,4 +1,3 @@
-
 /*
 
   The parser builds an abstact syntax tree from input tokens.
@@ -7,59 +6,62 @@
 
 #ifndef PARSER_H
 #define PARSER_H
+#pragma once
 
-#include "toker.h"
 #include "nodes.h"
+#include "toker.h"
+#include <map>
+#include <set>
+#include <string>
 
-class Parser{
+class Parser {
 public:
+  Parser(Toker &t);
 
-	Parser( Toker &t );
-
-	ProgNode *parse( const string &main );
+  ProgNode *parse(const std::string &main);
 
 private:
-	string incfile;
-	set<string> included;
-	Toker *toker,*main_toker;
-	map<string,DimNode*> arrayDecls;
+  std::string incfile;
+  std::set<std::string> included;
+  Toker *toker, *main_toker;
+  std::map<std::string, DimNode *> arrayDecls;
 
-	DeclSeqNode *consts;
-	DeclSeqNode *structs;
-	DeclSeqNode *funcs;
-	DeclSeqNode *datas;
+  DeclSeqNode *consts;
+  DeclSeqNode *structs;
+  DeclSeqNode *funcs;
+  DeclSeqNode *datas;
 
-	StmtSeqNode *parseStmtSeq( int scope );
-	void parseStmtSeq( StmtSeqNode *stmts,int scope );
+  StmtSeqNode *parseStmtSeq(int scope);
+  void parseStmtSeq(StmtSeqNode *stmts, int scope);
 
-	void ex( const string &s );
-	void exp( const string &s );
+  void ex(const std::string &s);
+  void exp(const std::string &s);
 
-	string parseIdent();
-	void parseChar( int c );
-	string parseTypeTag();
+  std::string parseIdent();
+  void parseChar(int c);
+  std::string parseTypeTag();
 
-	VarNode *parseVar();
-	VarNode *parseVar( const string &ident,const string &tag );
-	CallNode *parseCall( const string &ident,const string &tag );
-	IfNode *parseIf();
+  VarNode *parseVar();
+  VarNode *parseVar(const std::string &ident, const std::string &tag);
+  CallNode *parseCall(const std::string &ident, const std::string &tag);
+  IfNode *parseIf();
 
-	DeclNode *parseVarDecl( int kind,bool constant );
-	DimNode  *parseArrayDecl();
-	DeclNode *parseFuncDecl();
-	DeclNode *parseStructDecl();
+  DeclNode *parseVarDecl(int kind, bool constant);
+  DimNode *parseArrayDecl();
+  DeclNode *parseFuncDecl();
+  DeclNode *parseStructDecl();
 
-	ExprSeqNode *parseExprSeq();
+  ExprSeqNode *parseExprSeq();
 
-	ExprNode *parseExpr( bool opt );
-	ExprNode *parseExpr1( bool opt );	//And, Or, Eor
-	ExprNode *parseExpr2( bool opt );	//<,=,>,<=,<>,>=
-	ExprNode *parseExpr3( bool opt );	//+,-
-	ExprNode *parseExpr4( bool opt );	//Lsr,Lsr,Asr
-	ExprNode *parseExpr5( bool opt );	//*,/,Mod
-	ExprNode *parseExpr6( bool opt );	//^
-	ExprNode *parseUniExpr( bool opt );	//+,-,Not,~
-	ExprNode *parsePrimary( bool opt );
+  ExprNode *parseExpr(bool opt);
+  ExprNode *parseExpr1(bool opt);   // And, Or, Eor
+  ExprNode *parseExpr2(bool opt);   //<,=,>,<=,<>,>=
+  ExprNode *parseExpr3(bool opt);   //+,-
+  ExprNode *parseExpr4(bool opt);   // Lsr,Lsr,Asr
+  ExprNode *parseExpr5(bool opt);   //*,/,Mod
+  ExprNode *parseExpr6(bool opt);   //^
+  ExprNode *parseUniExpr(bool opt); //+,-,Not,~
+  ExprNode *parsePrimary(bool opt);
 };
 
 #endif

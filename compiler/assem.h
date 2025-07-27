@@ -1,15 +1,16 @@
-
 #ifndef ASSEM_H
 #define ASSEM_H
+#pragma once
 
-#include "..\linker\linker.h"
+#include "linker.h"
+#include <istream>
 
-class Assem{
+class Assem {
 public:
-	istream &in;
-	Module *mod;
-	Assem( istream &in,Module *mod ):in( in ),mod( mod ){}
-	virtual void assemble()=0;
+  std::istream &in;
+  Module *mod;
+  Assem(std::istream &in, Module *mod) : in(in), mod(mod) {}
+  virtual void assemble() = 0;
 };
 
 #endif

@@ -5,155 +5,6 @@
 #include <cstring>
 #include <filesystem>
 
-#ifdef MEMDEBUG
-
-struct Mem {
-  Mem *next, *prev;
-  const char *file;
-  int line, size, tag;
-};
-
-static bool track;
-
-static Mem head, tail;
-static Mem x_head, x_tail;
-
-static void remove(Mem *m) {
-  m->next->prev = m->prev;
-  m->prev->next = m->next;
-}
-
-static void insert(Mem *m, Mem *next) {
-  m->next = next;
-  m->prev = next->prev;
-  next->prev->next = m;
-  next->prev = m;
-}
-
-static void init() {
-  if (head.next)
-    return;
-  head.next = head.prev = &tail;
-  head.tag = 'HEAD';
-  tail.next = tail.prev = &head;
-  tail.tag = 'TAIL';
-  x_head.next = x_head.prev = &x_tail;
-  x_head.tag = 'HEAD';
-  x_tail.next = x_tail.prev = &x_head;
-  x_tail.tag = 'TAIL';
-}
-
-static void check(Mem *m) {
-  if (m->tag != 'DNEW') {
-    throw "[Memory error] mem_check: pre_tag!='DNEW'";
-    if (m->tag == 'NDWE') {
-      string t = "Probable double delete";
-      t += "- d_new file: " + string(m->file) + " line:" + itoa(m->line);
-      throw "[Memory error] " + t.c_str();
-    }
-    ExitProcess(0);
-  }
-  int *t = (int *)((char *)(m + 1) + m->size);
-  if (*t != 'dnew') {
-    throw "[Memory error] mem_check: post_tag!='dnew'";
-    string t = "Probable memory overwrite - d_new file: " + string(m->file) +
-               " line:" + itoa(m->line);
-    throw "[Memory error] " + t.c_str();
-    ExitProcess(0);
-  }
-}
-
-static void *op_new(size_t size, const char *file = "<unknown>", int line = 0) {
-  init();
-  Mem *m = (Mem *)malloc(sizeof(Mem) + size + sizeof(int));
-  memset(m + 1, 0xcc, size);
-  m->file = file;
-  m->line = line;
-  m->size = size;
-  m->tag = 'DNEW';
-  int *t = (int *)((char *)(m + 1) + size);
-  *t = 'dnew';
-  if (track)
-    insert(m, head.next);
-  else
-    insert(m, x_head.next);
-  return m + 1;
-}
-
-static void op_delete(void *q) {
-  init();
-  if (!q)
-    return;
-  Mem *m = (Mem *)q - 1;
-  check(m);
-  remove(m);
-  m->tag = 'NDWE';
-  *(int *)((char *)(m + 1) + m->size) = 'ndwe';
-  free(m);
-}
-
-void trackmem(bool enable) {
-  init();
-  if (track == enable)
-    return;
-  track = enable;
-  Mem *m;
-  while ((m = head.next) != &tail) {
-    remove(m);
-    insert(m, x_head.next);
-  }
-}
-
-void checkmem(ostream &out) {
-  init();
-  Mem *m, *next;
-  int sum = 0, usum = 0, xsum = 0;
-  for (m = head.next; m != &tail; m = next) {
-    check(m);
-    next = m->next;
-    if (m->line) {
-      out << m->file << " line:" << m->line << " " << m->size << " bytes"
-          << endl;
-      sum += m->size;
-    } else {
-      usum += m->size;
-    }
-  }
-  for (m = x_head.next; m != &x_tail; m = m->next) {
-    check(m);
-    xsum += m->size;
-  }
-  out << "Tracked blitz mem in use:" << sum << endl;
-  out << "Tracked other mem in use:" << usum << endl;
-  out << "Untracked mem in use:" << xsum << endl;
-  out << "Total mem in use:" << (sum + usum + xsum) << endl;
-}
-
-void *_cdecl operator new(size_t size) { return op_new(size); }
-void *_cdecl operator new[](size_t size) { return op_new(size); }
-void *_cdecl operator new(size_t size, const char *file, int line) {
-  return op_new(size, file, line);
-}
-void *_cdecl operator new[](size_t size, const char *file, int line) {
-  return op_new(size, file, line);
-}
-void _cdecl operator delete(void *q) { op_delete(q); }
-void _cdecl operator delete[](void *q) { op_delete(q); }
-void _cdecl operator delete(void *q, const char *file, int line) {
-  op_delete(q);
-}
-void _cdecl operator delete[](void *q, const char *file, int line) {
-  op_delete(q);
-}
-
-#else
-
-void trackmem(bool enable) {}
-
-void checkmem(std::ostream &out) {}
-
-#endif
-
 int atoi(const std::string &s) { return atoi(s.c_str()); }
 
 double atof(const std::string &s) { return atof(s.c_str()); }
@@ -229,7 +80,7 @@ std::filesystem::path filenamefile(const std::filesystem::path &t) {
 const int MIN_SIZE = 256;
 
 qstreambuf::qstreambuf() {
-  buf = d_new char[MIN_SIZE];
+  buf = new char[MIN_SIZE];
   setg(buf, buf, buf);
   setp(buf, buf + MIN_SIZE);
 }
@@ -259,7 +110,7 @@ qstreambuf::int_type qstreambuf::overflow(qstreambuf::int_type c) {
     int n_sz = sz * 2;
     if (n_sz < MIN_SIZE)
       n_sz = MIN_SIZE;
-    char *n_buf = d_new char[n_sz];
+    char *n_buf = new char[n_sz];
     memcpy(n_buf, gptr(), sz);
     delete buf;
     buf = n_buf;

@@ -57,7 +57,7 @@ private:
 
     char *old_data = data;
 
-    data = d_new char[data_sz];
+    data = new char[data_sz];
     memcpy(data, old_data, pc);
     delete[] old_data;
   }
@@ -164,14 +164,10 @@ bool BBModule::findSymbol(const char *sym, int *pc) {
 int Linker::version() { return VERSION; }
 
 bool Linker::canCreateExe() {
-#ifdef DEMO
-  return false;
-#else
   return true;
-#endif
 }
 
-Module *Linker::createModule() { return d_new BBModule(); }
+Module *Linker::createModule() { return new BBModule(); }
 
 void Linker::deleteModule(Module *mod) { delete mod; }
 
@@ -181,9 +177,6 @@ Linker *linkerGetLinker() {
 }
 
 bool BBModule::createExe(const char *exe_file, const char *dll_file) {
-#ifdef DEMO
-  return false;
-#else
   // find proc address of bbWinMain
   void *hmod = dlopen(dll_file, RTLD_LAZY);
   if (!hmod)
@@ -259,5 +252,4 @@ bool BBModule::createExe(const char *exe_file, const char *dll_file) {
   closeImage();
 
   return true;
-#endif
 }

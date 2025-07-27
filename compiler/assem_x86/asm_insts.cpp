@@ -2,8 +2,6 @@
 //This is generated code - do not modify!!!!!
 //
 
-#include "..\std.h"
-
 
 #include "insts.h"
 

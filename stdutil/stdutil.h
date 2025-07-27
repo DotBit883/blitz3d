@@ -6,27 +6,6 @@
 #include <iostream>
 #include <string>
 
-#ifdef MEMDEBUG
-
-void *_cdecl operator new(size_t size);
-void *_cdecl operator new[](size_t size);
-void *_cdecl operator new(size_t size, const char *file, int line);
-void *_cdecl operator new[](size_t size, const char *file, int line);
-void _cdecl operator delete(void *q);
-void _cdecl operator delete[](void *q);
-void _cdecl operator delete(void *q, const char *file, int line);
-void _cdecl operator delete[](void *q, const char *file, int line);
-#define d_new new (__FILE__, __LINE__)
-
-#else
-
-#define d_new new
-
-#endif
-
-void trackmem(bool enable);
-void checkmem(std::ostream &out);
-
 // some stuff that should be in std libs
 int atoi(const std::string &s);
 double atof(const std::string &s);
@@ -92,9 +71,9 @@ public:
   pointer allocate(size_type n, const void *) {
     std::clog << "Allocating " << n << std::endl;
     if (n > 1)
-      return d_new T[n];
+      return new T[n];
     if (!free) {
-      free = (T *)d_new char[sizeof(T) * N];
+      free = (T *)new char[sizeof(T) * N];
       for (int k = 0; k < N - 1; ++k)
         *(T **)(free + k) = free + k + 1;
       *(T **)(free + N - 1) = 0;

@@ -1,6 +1,6 @@
-
 #ifndef ASSEM_X86_H
 #define ASSEM_X86_H
+#pragma once
 
 #include "../assem.h"
 
