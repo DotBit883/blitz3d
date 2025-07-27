@@ -21,6 +21,11 @@ endif()
 
 message(STATUS "Building edition: ${BUILD_EDITION}")
 
+# Important
+add_subdirectory(config)
+add_subdirectory(stdutil)
+
+# Executables
 add_subdirectory(asm_makeinsts)
 add_subdirectory(bblaunch)
 # add_subdirectory(bbruntime)
@@ -29,10 +34,8 @@ add_subdirectory(bblaunch)
 # add_subdirectory(blitz3d)
 # add_subdirectory(blitzide)
 # add_subdirectory(compiler)
-add_subdirectory(config)
 # add_subdirectory(debugger)
 # add_subdirectory(gxruntime)
 # add_subdirectory(innosetup)
-# add_subdirectory(linker)
-# add_subdirectory(linker_dll)
-add_subdirectory(stdutil)
+add_subdirectory(linker)
+add_subdirectory(linker_dll)
